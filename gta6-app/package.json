@@ -1,0 +1,24 @@
+{
+  "name": "@workspace/gta6-countdown",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "./node_modules/.bin/next dev -p ${PORT:-3000}",
+    "build": "./node_modules/.bin/next build",
+    "start": "./node_modules/.bin/next start -p ${PORT:-3000}",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.171.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.171.0",
+    "typescript": "^5.7.0"
+  }
+}
