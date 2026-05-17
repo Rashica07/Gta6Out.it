@@ -790,3 +790,249 @@ body {
   color: #b060e8;
   text-transform: uppercase;
 }
+
+/* ─── EASTER EGG: WANTED LEVEL ─── */
+@keyframes wanted-flash {
+  0%, 100% { background: rgba(180, 0, 0, 0.82); }
+  50%       { background: rgba(0, 30, 180, 0.82); }
+}
+
+.wanted-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  animation: wanted-flash 0.55s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.wanted-stars {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: 0.3em;
+  text-shadow:
+    0 0 20px rgba(255,220,0,1),
+    0 0 50px rgba(255,180,0,0.8),
+    0 0 100px rgba(255,100,0,0.5);
+  animation: star-pulse 0.55s ease-in-out infinite;
+}
+
+@keyframes star-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.06); }
+}
+
+.wanted-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 4px 0 rgba(0,0,0,0.6);
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.wanted-radio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: min(540px, 90vw);
+  text-align: center;
+}
+
+.wanted-radio-label {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: rgba(255,220,100,0.9);
+  text-transform: uppercase;
+}
+
+.wanted-radio-text {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.9);
+  text-transform: uppercase;
+  min-height: 2rem;
+}
+
+.wanted-dismiss {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  animation: fade-pulse 1.2s ease-in-out infinite;
+}
+
+/* ─── EASTER EGG: ROCKSTAR REVEAL ─── */
+.rockstar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  animation: fade-in 0.3s ease;
+}
+
+.rockstar-logo {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(5rem, 18vw, 10rem);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-shadow:
+    0 0 40px rgba(100,220,100,0.9),
+    0 0 80px rgba(80,200,80,0.5);
+  letter-spacing: -0.02em;
+}
+
+.rockstar-logo.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.rockstar-name {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(1rem, 3.5vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+}
+
+.rockstar-name.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rockstar-presents {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  color: rgba(180,255,180,0.6);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  min-height: 1.5rem;
+}
+
+.rockstar-presents.visible { opacity: 1; }
+
+/* ─── EASTER EGG: LOADING TIP ─── */
+.tip-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 12, 0.9);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: clamp(2rem, 8vh, 5rem);
+  cursor: pointer;
+  animation: fade-in 0.3s ease;
+}
+
+.tip-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: min(560px, 88vw);
+  padding: 1.5rem 2rem;
+  background: rgba(10, 0, 25, 0.96);
+  border: 1px solid rgba(180, 0, 255, 0.25);
+  border-radius: 8px;
+  box-shadow: 0 0 50px rgba(180, 0, 255, 0.15);
+  text-align: center;
+  animation: modal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.tip-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 12px rgba(255, 220, 0, 0.6));
+}
+
+.tip-text {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(220, 180, 255, 0.9);
+  line-height: 1.5;
+  min-height: 3rem;
+}
+
+.tip-dismiss {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: rgba(120, 60, 180, 0.6);
+  text-transform: uppercase;
+  animation: fade-pulse 1.4s ease-in-out infinite;
+}
+
+/* ─── EASTER EGG: CHEAT CODE FLASH ─── */
+.cheat-flash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  animation: cheat-pop 2.2s ease forwards;
+}
+
+@keyframes cheat-pop {
+  0%   { opacity: 0; transform: translate(-50%, -55%) scale(0.7); }
+  12%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  20%  { transform: translate(-50%, -50%) scale(1); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+}
+
+.cheat-accepted {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgba(255, 200, 80, 0.9);
+  text-transform: uppercase;
+  padding: 0.25rem 1rem;
+  background: rgba(80, 40, 0, 0.85);
+  border: 1px solid rgba(255, 180, 0, 0.4);
+  border-radius: 3px;
+}
+
+.cheat-code {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  letter-spacing: 0.18em;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255, 200, 0, 0.9),
+    0 0 50px rgba(255, 140, 0, 0.6);
+}

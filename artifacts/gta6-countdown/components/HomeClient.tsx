@@ -10,6 +10,32 @@ const SITE_URL = 'https://gta6out.it'
 const EASTER_EGG_TEXT = 'You discovered the real GTA VI'
 const HOLD_DURATION = 3000
 
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']
+
+const POLICE_MESSAGES = [
+  'ALL UNITS — SUSPECT SPOTTED ON OCEAN DRIVE. RESPOND IMMEDIATELY.',
+  'DISPATCH: CODE RED AT THE STRIP. ALL AVAILABLE UNITS.',
+  'SUSPECT IS ARMED AND CONSIDERED EXTREMELY DANGEROUS.',
+  'VCPD HELICOPTER IS IN PURSUIT. ALL UNITS STAND BY.',
+  'OFFICER DOWN. REQUESTING IMMEDIATE BACKUP. NOT A DRILL.',
+  'SUSPECT LAST SEEN HEADING SOUTHBOUND ON VICE BEACH BLVD.',
+]
+
+const GTA_TIPS = [
+  "Tip: Pay 'n' Spray removes your wanted level… for a price.",
+  'Tip: You can listen to the radio while the police are chasing you.',
+  'Tip: 5-star wanted level: The whole city wants you gone.',
+  'Tip: Ammu-Nation — Because freedom isn\'t free.',
+  'Tip: Always wear a bulletproof vest into a gunfight.',
+  'Tip: The VCPD are always watching. Always.',
+  'Tip: Buying safe houses is a sound long-term investment.',
+  'Tip: Taking a taxi is faster than outrunning the police on foot.',
+  'Tip: Never steal a cop car unless you want immediate attention.',
+  'Tip: Vice City real estate is booming. Get in early.',
+]
+
+const GTA_CHEATS = ['HESOYAM','LXGIWYL','FULLCLIP','OUIQDMW','AEZAKMI','BRINGITON','YECGAA','LJSPQK','CPKTNWT','AIYPWZQP']
+
 function vibrate(pattern: number | number[]) {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     navigator.vibrate(pattern)
@@ -51,10 +77,85 @@ function useTypewriter(text: string, active: boolean, speed = 55) {
   return displayed
 }
 
-function CountdownUnit({ value, label }: { value: number; label: string }) {
+// ─── Easter Egg: Wanted Level Overlay ───
+function WantedOverlay({ onClose }: { onClose: () => void }) {
+  const msg = useRef(POLICE_MESSAGES[Math.floor(Math.random() * POLICE_MESSAGES.length)])
+  const typed = useTypewriter(msg.current, true, 38)
+  return (
+    <div className="wanted-overlay" onClick={onClose}>
+      <div className="wanted-stars">★ ★ ★ ★ ★</div>
+      <div className="wanted-title">5-STAR WANTED LEVEL</div>
+      <div className="wanted-radio">
+        <span className="wanted-radio-label">VCPD DISPATCH ▶</span>
+        <span className="wanted-radio-text">{typed}</span>
+      </div>
+      <div className="wanted-dismiss">TAP ANYWHERE TO ESCAPE</div>
+    </div>
+  )
+}
+
+// ─── Easter Egg: Rockstar Reveal ───
+function RockstarReveal({ onClose }: { onClose: () => void }) {
+  const [phase, setPhase] = useState(0)
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 400)
+    const t2 = setTimeout(() => setPhase(2), 1200)
+    const t3 = setTimeout(() => { onClose() }, 3600)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [onClose])
+  const presents = useTypewriter('PRESENTS', phase >= 2, 80)
+  return (
+    <div className="rockstar-overlay" onClick={onClose}>
+      <div className={`rockstar-logo ${phase >= 1 ? 'visible' : ''}`}>R★</div>
+      <div className={`rockstar-name ${phase >= 1 ? 'visible' : ''}`}>ROCKSTAR GAMES</div>
+      <div className={`rockstar-presents ${phase >= 2 ? 'visible' : ''}`}>{presents}<span className="egg-cursor">|</span></div>
+    </div>
+  )
+}
+
+// ─── Easter Egg: GTA Loading Tip ───
+function LoadingTip({ tip, onClose }: { tip: string; onClose: () => void }) {
+  const typed = useTypewriter(tip, true, 32)
+  return (
+    <div className="tip-overlay" onClick={onClose}>
+      <div className="tip-box">
+        <div className="tip-icon">💡</div>
+        <div className="tip-text">{typed}<span className="egg-cursor">|</span></div>
+        <div className="tip-dismiss">TAP TO CONTINUE</div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Easter Egg: Cheat Code Flash ───
+function CheatFlash({ code, onDone }: { code: string; onDone: () => void }) {
+  useEffect(() => { const t = setTimeout(onDone, 2200); return () => clearTimeout(t) }, [onDone])
+  return (
+    <div className="cheat-flash">
+      <div className="cheat-accepted">CHEAT CODE ACCEPTED</div>
+      <div className="cheat-code">{code}</div>
+    </div>
+  )
+}
+
+function CountdownUnit({ value, label, onLongPress }: { value: number; label: string; onLongPress?: () => void }) {
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const startLong = () => {
+    if (!onLongPress) return
+    holdTimer.current = setTimeout(() => { vibrate([50, 30, 80]); onLongPress() }, 2500)
+  }
+  const cancelLong = () => { if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null } }
   return (
     <div className="countdown-unit">
-      <div className="countdown-number">{String(value).padStart(2, '0')}</div>
+      <div
+        className="countdown-number"
+        onPointerDown={startLong}
+        onPointerUp={cancelLong}
+        onPointerLeave={cancelLong}
+        style={onLongPress ? { cursor: 'pointer', userSelect: 'none' } : undefined}
+      >
+        {String(value).padStart(2, '0')}
+      </div>
       <div className="countdown-label">{label}</div>
     </div>
   )
@@ -78,8 +179,7 @@ function Fireworks() {
         particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, a: 1, c: colors[Math.floor(Math.random() * colors.length)], s: 2 + Math.random() * 4 })
       }
     }
-    let frame = 0
-    let id: number
+    let frame = 0; let id: number
     const tick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       if (frame % 38 === 0) burst(100 + Math.random() * (canvas.width - 200), 50 + Math.random() * (canvas.height / 2))
@@ -130,8 +230,7 @@ function EasterEggModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       <div className="egg-modal" onClick={e => e.stopPropagation()}>
         <img src="/media/gta6-official.jpeg" alt="Official GTA VI Logo" className="egg-logo" />
         <p className="egg-typewriter">
-          {typed}
-          {!isDone && <span className="egg-cursor">|</span>}
+          {typed}{!isDone && <span className="egg-cursor">|</span>}
         </p>
         <button className="egg-close" onClick={onClose}>CLOSE [ESC]</button>
       </div>
@@ -148,9 +247,23 @@ export default function HomeClient() {
   const [showCelebration, setShowCelebration] = useState(false)
   const [showShareCard, setShowShareCard] = useState(false)
 
-  // Logo click counter via refs to avoid React batching issues
+  // Easter egg states
+  const [showWanted, setShowWanted] = useState(false)
+  const [showRockstar, setShowRockstar] = useState(false)
+  const [loadingTip, setLoadingTip] = useState<string | null>(null)
+  const [cheatCode, setCheatCode] = useState<string | null>(null)
+
+  // Keyboard tracking refs (no state — avoids re-renders on every key)
+  const konamiProgress = useRef<string[]>([])
+  const typedBuffer = useRef('')
+
+  // Logo click counter
   const logoClickCount = useRef(0)
   const logoClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Hype ball triple-click
+  const ballClickCount = useRef(0)
+  const ballClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Hype bar
   const trackRef = useRef<HTMLDivElement>(null)
@@ -162,7 +275,7 @@ export default function HomeClient() {
   const holdStart = useRef(0)
   const isDraggingRef = useRef(false)
 
-  // Init — countdown + hype bar both tick every second
+  // Init — countdown + hype bar tick every second
   useEffect(() => {
     setTimeLeft(getTimeLeft())
     setBallPos(getAutoHype())
@@ -180,14 +293,54 @@ export default function HomeClient() {
     return () => clearInterval(gi)
   }, [timeLeft.done])
 
-  // ESC closes easter egg
+  // ─── Global keyboard easter eggs ───
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setEasterEggOpen(false) }
+    const onKey = (e: KeyboardEvent) => {
+      // ESC closes modals
+      if (e.key === 'Escape') {
+        setEasterEggOpen(false)
+        setShowWanted(false)
+        setShowRockstar(false)
+        setLoadingTip(null)
+        return
+      }
+
+      // ── Konami Code ──
+      const expected = KONAMI[konamiProgress.current.length]
+      if (e.key === expected) {
+        konamiProgress.current.push(e.key)
+        if (konamiProgress.current.length === KONAMI.length) {
+          konamiProgress.current = []
+          vibrate([200, 100, 200, 100, 200])
+          setShowWanted(true)
+          setTimeout(() => setShowWanted(false), 5000)
+        }
+      } else {
+        konamiProgress.current = e.key === KONAMI[0] ? [e.key] : []
+      }
+
+      // ── Type "ROCKSTAR" ──
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        typedBuffer.current = (typedBuffer.current + e.key.toLowerCase()).slice(-8)
+        if (typedBuffer.current === 'rockstar') {
+          typedBuffer.current = ''
+          vibrate([60, 40, 120])
+          setShowRockstar(true)
+        }
+      }
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // ─── Logo Easter Egg ───
+  // Auto-dismiss wanted overlay after 5s
+  useEffect(() => {
+    if (!showWanted) return
+    const t = setTimeout(() => setShowWanted(false), 5000)
+    return () => clearTimeout(t)
+  }, [showWanted])
+
+  // ─── Logo Easter Egg (5 clicks) ───
   const handleLogoClick = useCallback(() => {
     logoClickCount.current += 1
     if (logoClickCount.current >= 5) {
@@ -199,6 +352,28 @@ export default function HomeClient() {
     }
     if (logoClickTimer.current) clearTimeout(logoClickTimer.current)
     logoClickTimer.current = setTimeout(() => { logoClickCount.current = 0 }, 1800)
+  }, [])
+
+  // ─── Days long-press → loading tip ───
+  const handleDaysLongPress = useCallback(() => {
+    const tip = GTA_TIPS[Math.floor(Math.random() * GTA_TIPS.length)]
+    setLoadingTip(tip)
+  }, [])
+
+  // ─── Hype ball triple-click → cheat code ───
+  const handleBallClick = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation()
+    ballClickCount.current += 1
+    if (ballClickCount.current >= 3) {
+      ballClickCount.current = 0
+      if (ballClickTimer.current) clearTimeout(ballClickTimer.current)
+      const code = GTA_CHEATS[Math.floor(Math.random() * GTA_CHEATS.length)]
+      vibrate([30, 20, 30, 20, 80])
+      setCheatCode(code)
+      return
+    }
+    if (ballClickTimer.current) clearTimeout(ballClickTimer.current)
+    ballClickTimer.current = setTimeout(() => { ballClickCount.current = 0 }, 600)
   }, [])
 
   // ─── Hype Bar Drag ───
@@ -242,10 +417,8 @@ export default function HomeClient() {
     const onMove = (e: MouseEvent) => { if (isDraggingRef.current) updateBall(e.clientX) }
     const onTouch = (e: TouchEvent) => { if (isDraggingRef.current) updateBall(e.touches[0].clientX) }
     const onEnd = () => {
-      setIsDragging(false)
-      isDraggingRef.current = false
-      clearHold()
-      setBallPos(getAutoHype())
+      setIsDragging(false); isDraggingRef.current = false
+      clearHold(); setBallPos(getAutoHype())
     }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('touchmove', onTouch, { passive: false })
@@ -260,9 +433,7 @@ export default function HomeClient() {
   }, [isDragging, updateBall, clearHold])
 
   const handleTrackDown = (clientX: number) => {
-    setIsDragging(true)
-    isDraggingRef.current = true
-    updateBall(clientX)
+    setIsDragging(true); isDraggingRef.current = true; updateBall(clientX)
   }
 
   const handleShare = useCallback(() => {
@@ -284,15 +455,17 @@ export default function HomeClient() {
       <div className="noise-overlay" />
       <div className="grid-overlay" />
 
+      {/* Easter Egg Overlays */}
       <EasterEggModal isOpen={easterEggOpen} onClose={() => setEasterEggOpen(false)} />
+      {showWanted && <WantedOverlay onClose={() => setShowWanted(false)} />}
+      {showRockstar && <RockstarReveal onClose={() => setShowRockstar(false)} />}
+      {loadingTip && <LoadingTip tip={loadingTip} onClose={() => setLoadingTip(null)} />}
+      {cheatCode && <CheatFlash code={cheatCode} onDone={() => setCheatCode(null)} />}
       {showShareCard && (
         <ShareCard
-          days={timeLeft.days}
-          hours={timeLeft.hours}
-          minutes={timeLeft.minutes}
-          seconds={timeLeft.seconds}
-          hype={ballPos}
-          onClose={() => setShowShareCard(false)}
+          days={timeLeft.days} hours={timeLeft.hours}
+          minutes={timeLeft.minutes} seconds={timeLeft.seconds}
+          hype={ballPos} onClose={() => setShowShareCard(false)}
         />
       )}
 
@@ -308,11 +481,11 @@ export default function HomeClient() {
           />
         </div>
 
-        {/* COUNTDOWN */}
+        {/* COUNTDOWN — long-press DAYS for loading tip */}
         <div className="countdown-section">
           <p className="countdown-heading">RELEASING NOVEMBER 19, 2026</p>
           <div className="countdown-grid">
-            <CountdownUnit value={timeLeft.days} label="DAYS" />
+            <CountdownUnit value={timeLeft.days} label="DAYS" onLongPress={handleDaysLongPress} />
             <div className="countdown-sep">:</div>
             <CountdownUnit value={timeLeft.hours} label="HOURS" />
             <div className="countdown-sep">:</div>
@@ -349,6 +522,7 @@ export default function HomeClient() {
                   transition: isDragging ? 'none' : 'width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 }}
               />
+              {/* Triple-click hype ball for cheat code */}
               <div
                 className={`hype-ball${isDragging ? ' dragging' : ''}`}
                 style={{
@@ -357,6 +531,7 @@ export default function HomeClient() {
                     ? 'transform 0.1s ease, box-shadow 0.2s ease'
                     : 'left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.1s ease, box-shadow 0.2s ease',
                 }}
+                onClick={handleBallClick}
               />
             </div>
           </div>
