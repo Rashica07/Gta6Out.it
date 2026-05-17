@@ -17,9 +17,9 @@ function getTimeLeft() {
 }
 
 function getHypeProgress() {
-  const total = RELEASE_DATE.getTime() - ANNOUNCE_DATE.getTime();
-  const elapsed = Date.now() - ANNOUNCE_DATE.getTime();
-  return Math.min(100, Math.max(0, (elapsed / total) * 100));
+  const remaining = RELEASE_DATE.getTime() - Date.now();
+  const oneYear = 365 * 24 * 60 * 60 * 1000;
+  return Math.min(100, Math.max(0, (remaining / oneYear) * 100));
 }
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -221,8 +221,8 @@ export default function Home() {
             <div className="hype-glow" style={{ left: `${hype}%` }} />
           </div>
           <div className="hype-ends">
-            <span>DEC 2023</span>
-            <span>NOV 2026</span>
+            <span>LAUNCH DAY</span>
+            <span>1 YEAR OUT</span>
           </div>
         </div>
 
