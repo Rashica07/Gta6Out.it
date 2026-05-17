@@ -1,0 +1,6 @@
+{
+  "buildCommand": "pnpm --filter @workspace/gta6-countdown run build",
+  "outputDirectory": "artifacts/gta6-countdown/.next",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs"
+}
