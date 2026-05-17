@@ -1,6 +1,6 @@
-# [Project name]
+# GTA 6 Countdown
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A graphically styled countdown website to the GTA 6 release on November 19, 2026, with a purple/pink neon aesthetic, animated countdown timer, and custom GTA VI logo.
 
 ## Run & Operate
 
@@ -14,6 +14,7 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite (artifacts/gta6-countdown)
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,15 +23,18 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
-
-## Architecture decisions
-
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- `artifacts/gta6-countdown/src/pages/home.tsx` — main countdown page
+- `artifacts/gta6-countdown/src/index.css` — all styles (neon purple/pink theme)
+- `artifacts/gta6-countdown/public/media/gta6-logo.svg` — GTA VI logo (SVG)
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+A single-page countdown site for GTA 6. Features:
+- Live countdown timer (days/hours/minutes/seconds) to November 19, 2026
+- Custom GTA VI logo with neon glow and floating animation
+- Purple/pink/magenta color palette with grid overlay and noise texture
+- Glitch effect on the logo every few seconds
+- "Created by Rashica07" footer credit bar
 
 ## User preferences
 
