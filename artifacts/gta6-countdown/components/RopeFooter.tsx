@@ -183,8 +183,10 @@ export default function RopeFooter() {
       isDragging.current = false
       stopLoop()
       setPulling(false)
-      setDragY(0)
       dragYRef.current = 0
+      // rAF ensures the transition is active before we reset dragY to 0,
+      // so the spring-back animation actually fires
+      requestAnimationFrame(() => setDragY(0))
     }
 
     window.addEventListener('pointermove', handleMove)

@@ -2,8 +2,14 @@
 /* [project]/artifacts/gta6-countdown/app/globals.css [app-client] (css) */
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
   margin: 0;
   padding: 0;
+}
+
+a, button, img, [role="button"] {
+  -webkit-touch-callout: none;
+  outline: none;
 }
 
 body {
@@ -74,6 +80,9 @@ body {
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
   width: min(480px, 90vw);
   transition: filter .3s;
   animation: 5s ease-in-out infinite float;
@@ -324,7 +333,6 @@ body {
   background: linear-gradient(90deg, #7b00ff, #c000ff, #ff50cc, #ff8c00);
   border-radius: 99px;
   height: 100%;
-  transition: width 50ms linear;
   position: relative;
   box-shadow: 0 0 12px #c800ffcc, 0 0 30px #ff64004d;
 }

@@ -4,6 +4,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, img, [role="button"] {
+  outline: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -88,6 +94,9 @@ body {
   animation: float 5s ease-in-out infinite;
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  -webkit-touch-callout: none;
 }
 
 .gta-logo:active {
@@ -316,7 +325,6 @@ body {
   border-radius: 99px;
   background: linear-gradient(90deg, #7b00ff, #c000ff, #ff50cc, #ff8c00);
   box-shadow: 0 0 12px rgba(200, 0, 255, 0.8), 0 0 30px rgba(255, 100, 0, 0.3);
-  transition: width 0.05s linear;
   position: relative;
 }
 

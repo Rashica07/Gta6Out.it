@@ -236,7 +236,12 @@ export default function HomeClient() {
     if (!isDragging) return
     const onMove = (e: MouseEvent) => { if (isDraggingRef.current) updateBall(e.clientX) }
     const onTouch = (e: TouchEvent) => { if (isDraggingRef.current) updateBall(e.touches[0].clientX) }
-    const onEnd = () => { setIsDragging(false); isDraggingRef.current = false; clearHold() }
+    const onEnd = () => {
+      setIsDragging(false)
+      isDraggingRef.current = false
+      clearHold()
+      setBallPos(getAutoHype())
+    }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('touchmove', onTouch, { passive: false })
     window.addEventListener('mouseup', onEnd)
@@ -322,8 +327,22 @@ export default function HomeClient() {
               onMouseDown={e => handleTrackDown(e.clientX)}
               onTouchStart={e => { e.preventDefault(); handleTrackDown(e.touches[0].clientX) }}
             >
-              <div className="hype-fill" style={{ width: `${ballPos}%` }} />
-              <div className={`hype-ball${isDragging ? ' dragging' : ''}`} style={{ left: `${ballPos}%` }} />
+              <div
+                className="hype-fill"
+                style={{
+                  width: `${ballPos}%`,
+                  transition: isDragging ? 'none' : 'width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                }}
+              />
+              <div
+                className={`hype-ball${isDragging ? ' dragging' : ''}`}
+                style={{
+                  left: `${ballPos}%`,
+                  transition: isDragging
+                    ? 'transform 0.1s ease, box-shadow 0.2s ease'
+                    : 'left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.1s ease, box-shadow 0.2s ease',
+                }}
+              />
             </div>
           </div>
 
