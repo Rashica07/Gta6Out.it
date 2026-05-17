@@ -19,22 +19,49 @@ const POLICE_MESSAGES = [
   'VCPD HELICOPTER IS IN PURSUIT. ALL UNITS STAND BY.',
   'OFFICER DOWN. REQUESTING IMMEDIATE BACKUP. NOT A DRILL.',
   'SUSPECT LAST SEEN HEADING SOUTHBOUND ON VICE BEACH BLVD.',
-]
-
-const GTA_TIPS = [
-  "Tip: Pay 'n' Spray removes your wanted level… for a price.",
-  'Tip: You can listen to the radio while the police are chasing you.',
-  'Tip: 5-star wanted level: The whole city wants you gone.',
-  'Tip: Ammu-Nation — Because freedom isn\'t free.',
-  'Tip: Always wear a bulletproof vest into a gunfight.',
-  'Tip: The VCPD are always watching. Always.',
-  'Tip: Buying safe houses is a sound long-term investment.',
-  'Tip: Taking a taxi is faster than outrunning the police on foot.',
-  'Tip: Never steal a cop car unless you want immediate attention.',
-  'Tip: Vice City real estate is booming. Get in early.',
+  'SUSPECT HAS STOLEN A POLICE VEHICLE. REPEAT: OFFICER\'S CRUISER IS GONE.',
+  'ALL UNITS: DO NOT LET THEM REACH THE PORT. BLOCK ALL EXITS.',
 ]
 
 const GTA_CHEATS = ['HESOYAM','LXGIWYL','FULLCLIP','OUIQDMW','AEZAKMI','BRINGITON','YECGAA','LJSPQK','CPKTNWT','AIYPWZQP']
+
+// ─── Audio: synthesised police siren via Web Audio API ───
+function playSiren(durationMs: number): () => void {
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    if (!AudioCtx) return () => {}
+    const ctx = new AudioCtx()
+
+    const master = ctx.createGain()
+    master.gain.value = 0.09
+    master.connect(ctx.destination)
+
+    const osc = ctx.createOscillator()
+    osc.type = 'sawtooth'
+    osc.connect(master)
+
+    // WAIL pattern: 660 Hz → 1340 Hz cycle
+    const cycle = 0.88
+    const cycles = Math.ceil(durationMs / 1000 / cycle) + 2
+    for (let i = 0; i < cycles; i++) {
+      const t = ctx.currentTime + i * cycle
+      osc.frequency.setValueAtTime(660, t)
+      osc.frequency.exponentialRampToValueAtTime(1340, t + cycle * 0.48)
+      osc.frequency.exponentialRampToValueAtTime(660, t + cycle)
+    }
+
+    // Fade out in last 0.6 s
+    const end = ctx.currentTime + durationMs / 1000
+    master.gain.setValueAtTime(0.09, end - 0.6)
+    master.gain.linearRampToValueAtTime(0, end)
+
+    osc.start()
+    osc.stop(end)
+    return () => { try { ctx.close() } catch { /* ignore */ } }
+  } catch {
+    return () => {}
+  }
+}
 
 function vibrate(pattern: number | number[]) {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -77,14 +104,70 @@ function useTypewriter(text: string, active: boolean, speed = 55) {
   return displayed
 }
 
+// ─── Vice City star SVG ───
+function VCStar({ index }: { index: number }) {
+  const id = `sg${index}`
+  return (
+    <svg className="vc-star" viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id={id} cx="50%" cy="38%" r="65%">
+          <stop offset="0%" stopColor="#ffffc0" />
+          <stop offset="35%" stopColor="#ffd700" />
+          <stop offset="80%" stopColor="#ff9500" />
+          <stop offset="100%" stopColor="#cc5500" />
+        </radialGradient>
+        <filter id={`gf${index}`} x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+          <feFlood floodColor="#ff8800" floodOpacity="0.7" result="color" />
+          <feComposite in="color" in2="blur" operator="in" result="shadow" />
+          <feMerge>
+            <feMergeNode in="shadow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <polygon
+        points="50,4 61.8,36 95,36 68.5,57 79,90 50,69.5 21,90 31.5,57 5,36 38.2,36"
+        fill={`url(#${id})`}
+        stroke="#b05000"
+        strokeWidth="1.5"
+        filter={`url(#gf${index})`}
+      />
+    </svg>
+  )
+}
+
+// ─── Police light bar (red-white-blue strobe at top) ───
+function PoliceLightBar() {
+  return (
+    <div className="police-bar" aria-hidden="true">
+      <div className="police-segment red-a" />
+      <div className="police-segment red-b" />
+      <div className="police-segment white-m" />
+      <div className="police-segment white-m2" />
+      <div className="police-segment blue-a" />
+      <div className="police-segment blue-b" />
+    </div>
+  )
+}
+
 // ─── Easter Egg: Wanted Level Overlay ───
 function WantedOverlay({ onClose }: { onClose: () => void }) {
   const msg = useRef(POLICE_MESSAGES[Math.floor(Math.random() * POLICE_MESSAGES.length)])
-  const typed = useTypewriter(msg.current, true, 38)
+  const typed = useTypewriter(msg.current, true, 36)
+
+  useEffect(() => {
+    const stop = playSiren(5200)
+    return stop
+  }, [])
+
   return (
     <div className="wanted-overlay" onClick={onClose}>
-      <div className="wanted-stars">★ ★ ★ ★ ★</div>
-      <div className="wanted-title">5-STAR WANTED LEVEL</div>
+      <PoliceLightBar />
+      <div className="vc-stars-row">
+        {Array.from({ length: 6 }).map((_, i) => <VCStar key={i} index={i} />)}
+      </div>
+      <div className="wanted-title">6-STAR WANTED LEVEL</div>
       <div className="wanted-radio">
         <span className="wanted-radio-label">VCPD DISPATCH ▶</span>
         <span className="wanted-radio-text">{typed}</span>
@@ -100,7 +183,7 @@ function RockstarReveal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 400)
     const t2 = setTimeout(() => setPhase(2), 1200)
-    const t3 = setTimeout(() => { onClose() }, 3600)
+    const t3 = setTimeout(() => { onClose() }, 3800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [onClose])
   const presents = useTypewriter('PRESENTS', phase >= 2, 80)
@@ -108,20 +191,8 @@ function RockstarReveal({ onClose }: { onClose: () => void }) {
     <div className="rockstar-overlay" onClick={onClose}>
       <div className={`rockstar-logo ${phase >= 1 ? 'visible' : ''}`}>R★</div>
       <div className={`rockstar-name ${phase >= 1 ? 'visible' : ''}`}>ROCKSTAR GAMES</div>
-      <div className={`rockstar-presents ${phase >= 2 ? 'visible' : ''}`}>{presents}<span className="egg-cursor">|</span></div>
-    </div>
-  )
-}
-
-// ─── Easter Egg: GTA Loading Tip ───
-function LoadingTip({ tip, onClose }: { tip: string; onClose: () => void }) {
-  const typed = useTypewriter(tip, true, 32)
-  return (
-    <div className="tip-overlay" onClick={onClose}>
-      <div className="tip-box">
-        <div className="tip-icon">💡</div>
-        <div className="tip-text">{typed}<span className="egg-cursor">|</span></div>
-        <div className="tip-dismiss">TAP TO CONTINUE</div>
+      <div className={`rockstar-presents ${phase >= 2 ? 'visible' : ''}`}>
+        {presents}<span className="egg-cursor">|</span>
       </div>
     </div>
   )
@@ -152,7 +223,7 @@ function CountdownUnit({ value, label, onLongPress }: { value: number; label: st
         onPointerDown={startLong}
         onPointerUp={cancelLong}
         onPointerLeave={cancelLong}
-        style={onLongPress ? { cursor: 'pointer', userSelect: 'none' } : undefined}
+        style={onLongPress ? { cursor: 'pointer', userSelect: 'none', touchAction: 'none' } : undefined}
       >
         {String(value).padStart(2, '0')}
       </div>
@@ -164,18 +235,14 @@ function CountdownUnit({ value, label, onLongPress }: { value: number; label: st
 function Fireworks() {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    const colors = ['#ff00cc', '#cc00ff', '#ff50aa', '#fff', '#aa00ff', '#ff8c00', '#ffcc00', '#ff4500']
+    const canvas = ref.current; if (!canvas) return
+    const ctx = canvas.getContext('2d'); if (!ctx) return
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight
+    const colors = ['#ff00cc','#cc00ff','#ff50aa','#fff','#aa00ff','#ff8c00','#ffcc00','#ff4500']
     const particles: { x: number; y: number; vx: number; vy: number; a: number; c: string; s: number }[] = []
     const burst = (x: number, y: number) => {
       for (let i = 0; i < 90; i++) {
-        const angle = (Math.PI * 2 * i) / 90
-        const speed = 3 + Math.random() * 9
+        const angle = (Math.PI * 2 * i) / 90; const speed = 3 + Math.random() * 9
         particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, a: 1, c: colors[Math.floor(Math.random() * colors.length)], s: 2 + Math.random() * 4 })
       }
     }
@@ -246,14 +313,11 @@ export default function HomeClient() {
   const [showExplosion, setShowExplosion] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const [showShareCard, setShowShareCard] = useState(false)
-
-  // Easter egg states
   const [showWanted, setShowWanted] = useState(false)
   const [showRockstar, setShowRockstar] = useState(false)
-  const [loadingTip, setLoadingTip] = useState<string | null>(null)
   const [cheatCode, setCheatCode] = useState<string | null>(null)
 
-  // Keyboard tracking refs (no state — avoids re-renders on every key)
+  // Keyboard tracking refs
   const konamiProgress = useRef<string[]>([])
   const typedBuffer = useRef('')
 
@@ -264,6 +328,9 @@ export default function HomeClient() {
   // Hype ball triple-click
   const ballClickCount = useRef(0)
   const ballClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Tagline long-press (mobile ROCKSTAR)
+  const taglinePressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Hype bar
   const trackRef = useRef<HTMLDivElement>(null)
@@ -296,16 +363,11 @@ export default function HomeClient() {
   // ─── Global keyboard easter eggs ───
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // ESC closes modals
       if (e.key === 'Escape') {
-        setEasterEggOpen(false)
-        setShowWanted(false)
-        setShowRockstar(false)
-        setLoadingTip(null)
-        return
+        setEasterEggOpen(false); setShowWanted(false)
+        setShowRockstar(false); return
       }
-
-      // ── Konami Code ──
+      // Konami Code
       const expected = KONAMI[konamiProgress.current.length]
       if (e.key === expected) {
         konamiProgress.current.push(e.key)
@@ -313,13 +375,11 @@ export default function HomeClient() {
           konamiProgress.current = []
           vibrate([200, 100, 200, 100, 200])
           setShowWanted(true)
-          setTimeout(() => setShowWanted(false), 5000)
         }
       } else {
         konamiProgress.current = e.key === KONAMI[0] ? [e.key] : []
       }
-
-      // ── Type "ROCKSTAR" ──
+      // Type "ROCKSTAR"
       if (/^[a-zA-Z]$/.test(e.key)) {
         typedBuffer.current = (typedBuffer.current + e.key.toLowerCase()).slice(-8)
         if (typedBuffer.current === 'rockstar') {
@@ -333,12 +393,41 @@ export default function HomeClient() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Auto-dismiss wanted overlay after 5s
+  // ─── Shake detection (mobile Konami alternative) ───
   useEffect(() => {
-    if (!showWanted) return
-    const t = setTimeout(() => setShowWanted(false), 5000)
-    return () => clearTimeout(t)
-  }, [showWanted])
+    if (typeof window === 'undefined') return
+    let lastShakeTime = 0
+    let prevMag = 0
+
+    const handleMotion = (e: DeviceMotionEvent) => {
+      const acc = e.accelerationIncludingGravity
+      if (!acc) return
+      const mag = Math.sqrt((acc.x || 0) ** 2 + (acc.y || 0) ** 2 + (acc.z || 0) ** 2)
+      const delta = Math.abs(mag - prevMag)
+      prevMag = mag
+      if (delta > 20) {
+        const now = Date.now()
+        if (now - lastShakeTime > 3000) {
+          lastShakeTime = now
+          vibrate([100, 50, 100, 50, 200])
+          setShowWanted(true)
+        }
+      }
+    }
+
+    const setup = async () => {
+      if (typeof (DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> }).requestPermission === 'function') {
+        try {
+          const perm = await (DeviceMotionEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission()
+          if (perm === 'granted') window.addEventListener('devicemotion', handleMotion)
+        } catch { /* iOS permission denied */ }
+      } else {
+        window.addEventListener('devicemotion', handleMotion)
+      }
+    }
+    setup()
+    return () => window.removeEventListener('devicemotion', handleMotion)
+  }, [])
 
   // ─── Logo Easter Egg (5 clicks) ───
   const handleLogoClick = useCallback(() => {
@@ -354,10 +443,15 @@ export default function HomeClient() {
     logoClickTimer.current = setTimeout(() => { logoClickCount.current = 0 }, 1800)
   }, [])
 
-  // ─── Days long-press → loading tip ───
-  const handleDaysLongPress = useCallback(() => {
-    const tip = GTA_TIPS[Math.floor(Math.random() * GTA_TIPS.length)]
-    setLoadingTip(tip)
+  // ─── Tagline long-press → ROCKSTAR reveal (mobile) ───
+  const startTaglineLong = useCallback(() => {
+    taglinePressTimer.current = setTimeout(() => {
+      vibrate([60, 40, 120])
+      setShowRockstar(true)
+    }, 2500)
+  }, [])
+  const cancelTaglineLong = useCallback(() => {
+    if (taglinePressTimer.current) { clearTimeout(taglinePressTimer.current); taglinePressTimer.current = null }
   }, [])
 
   // ─── Hype ball triple-click → cheat code ───
@@ -379,24 +473,20 @@ export default function HomeClient() {
   // ─── Hype Bar Drag ───
   const clearHold = useCallback(() => {
     if (holdInterval.current) { clearInterval(holdInterval.current); holdInterval.current = null }
-    setIsHolding(false)
-    setHoldProgress(0)
+    setIsHolding(false); setHoldProgress(0)
   }, [])
 
   const startHold = useCallback(() => {
     if (holdInterval.current) return
     holdStart.current = Date.now()
-    setIsHolding(true)
-    vibrate(40)
+    setIsHolding(true); vibrate(40)
     holdInterval.current = setInterval(() => {
       const elapsed = Date.now() - holdStart.current
       const pct = Math.min(100, (elapsed / HOLD_DURATION) * 100)
       setHoldProgress(pct)
       if (pct >= 100) {
-        clearInterval(holdInterval.current!)
-        holdInterval.current = null
-        setIsHolding(false)
-        setHoldProgress(0)
+        clearInterval(holdInterval.current!); holdInterval.current = null
+        setIsHolding(false); setHoldProgress(0)
         vibrate([60, 30, 60, 30, 120, 30, 200])
         setShowExplosion(true)
       }
@@ -408,8 +498,7 @@ export default function HomeClient() {
     const rect = trackRef.current.getBoundingClientRect()
     const pos = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100))
     setBallPos(pos)
-    if (pos >= 99) startHold()
-    else clearHold()
+    if (pos >= 99) startHold(); else clearHold()
   }, [startHold, clearHold])
 
   useEffect(() => {
@@ -439,8 +528,7 @@ export default function HomeClient() {
   const handleShare = useCallback(() => {
     const text = `🚨 GTA 6 drops in ${timeLeft.days} days, ${timeLeft.hours} hours & ${timeLeft.minutes} minutes!\nVice City is almost here 🎮🔥\n\nTrack it 👉 ${SITE_URL}\n\n#GTA6 #GrandTheftAutoVI #RockstarGames`
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer')
-    setShareFlash(true)
-    setTimeout(() => setShareFlash(false), 1000)
+    setShareFlash(true); setTimeout(() => setShareFlash(false), 1000)
   }, [timeLeft.days, timeLeft.hours, timeLeft.minutes])
 
   if (showCelebration || timeLeft.done) return <CelebrationScreen />
@@ -459,7 +547,6 @@ export default function HomeClient() {
       <EasterEggModal isOpen={easterEggOpen} onClose={() => setEasterEggOpen(false)} />
       {showWanted && <WantedOverlay onClose={() => setShowWanted(false)} />}
       {showRockstar && <RockstarReveal onClose={() => setShowRockstar(false)} />}
-      {loadingTip && <LoadingTip tip={loadingTip} onClose={() => setLoadingTip(null)} />}
       {cheatCode && <CheatFlash code={cheatCode} onDone={() => setCheatCode(null)} />}
       {showShareCard && (
         <ShareCard
@@ -470,7 +557,7 @@ export default function HomeClient() {
       )}
 
       <main className="content">
-        {/* LOGO — click 5× for easter egg */}
+        {/* LOGO — 5 clicks for easter egg */}
         <div className="logo-section">
           <img
             src="/media/gta6-logo.svg"
@@ -481,11 +568,11 @@ export default function HomeClient() {
           />
         </div>
 
-        {/* COUNTDOWN — long-press DAYS for loading tip */}
+        {/* COUNTDOWN — long-press DAYS for wanted level */}
         <div className="countdown-section">
           <p className="countdown-heading">RELEASING NOVEMBER 19, 2026</p>
           <div className="countdown-grid">
-            <CountdownUnit value={timeLeft.days} label="DAYS" onLongPress={handleDaysLongPress} />
+            <CountdownUnit value={timeLeft.days} label="DAYS" onLongPress={() => { vibrate([100,50,100,50,200]); setShowWanted(true) }} />
             <div className="countdown-sep">:</div>
             <CountdownUnit value={timeLeft.hours} label="HOURS" />
             <div className="countdown-sep">:</div>
@@ -501,7 +588,6 @@ export default function HomeClient() {
             <span className="hype-label">HYPE METER</span>
             <span className="hype-pct">{ballPos.toFixed(1)}%</span>
           </div>
-
           <div className="hype-track-wrapper">
             {isHolding && (
               <>
@@ -522,7 +608,6 @@ export default function HomeClient() {
                   transition: isDragging ? 'none' : 'width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 }}
               />
-              {/* Triple-click hype ball for cheat code */}
               <div
                 className={`hype-ball${isDragging ? ' dragging' : ''}`}
                 style={{
@@ -535,7 +620,6 @@ export default function HomeClient() {
               />
             </div>
           </div>
-
           <div className="hype-ends">
             <span>LAUNCH DAY</span>
             <span>365 DAYS OUT</span>
@@ -554,8 +638,14 @@ export default function HomeClient() {
           <button className="btn-card" onClick={() => setShowShareCard(true)}>🎴 MY HYPE CARD</button>
         </div>
 
-        {/* TAGLINE */}
-        <div className="tagline-section">
+        {/* TAGLINE — long-press for ROCKSTAR reveal on mobile */}
+        <div
+          className="tagline-section"
+          onPointerDown={startTaglineLong}
+          onPointerUp={cancelTaglineLong}
+          onPointerLeave={cancelTaglineLong}
+          style={{ touchAction: 'none', userSelect: 'none' }}
+        >
           <p className="tagline"><span className="tagline-accent">Welcome</span> to Vice City</p>
           <p className="tagline-sub">The wait is almost over. Get ready.</p>
         </div>
