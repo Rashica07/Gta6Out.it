@@ -7,11 +7,12 @@ function vibrate(pattern: number | number[]) {
   }
 }
 
+const THRESHOLD_RATIO = 0.35
+
 export default function RopeFooter() {
   const [revealed, setRevealed] = useState(false)
   const [pulling, setPulling] = useState(false)
   const [dragY, setDragY] = useState(0)
-  const [ropePoints, setRopePoints] = useState<{ x: number; y: number }[]>([])
 
   const textRef = useRef<HTMLSpanElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -21,6 +22,9 @@ export default function RopeFooter() {
   const currentY = useRef(0)
   const animRef = useRef<number>(0)
   const dragYRef = useRef(0)
+
+  // AudioContext created on pointerdown (user gesture) so browsers/iframes allow it
+  const audioCtxRef = useRef<AudioContext | null>(null)
 
   // Rope nodes for Verlet physics
   const nodes = useRef<{ x: number; y: number; px: number; py: number; pinned: boolean }[]>([])
@@ -44,11 +48,9 @@ export default function RopeFooter() {
     const n = nodes.current
     if (!n.length) return
 
-    // Pin top node to cursor
     n[SEGS - 1].x = cursorX
     n[SEGS - 1].y = cursorY
 
-    // Verlet integrate (skip pinned)
     for (let i = 0; i < SEGS; i++) {
       if (n[i].pinned || i === SEGS - 1) continue
       const vx = n[i].x - n[i].px
@@ -59,14 +61,8 @@ export default function RopeFooter() {
       n[i].y += vy * 0.97 + GRAVITY
     }
 
-    // Satisfy constraints
     for (let iter = 0; iter < ITERS; iter++) {
-      // Bottom anchor
-      n[0].x = nodes.current[0].px === 0 ? n[0].x : n[0].x
-      if (n[0].pinned) {
-        // keep pinned
-      }
-
+      if (n[0].pinned) { /* keep */ }
       for (let i = 0; i < SEGS - 1; i++) {
         const a = n[i]
         const b = n[i + 1]
@@ -91,7 +87,7 @@ export default function RopeFooter() {
     if (n.length < 2) return
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-    const progress = Math.min(1, dragYRef.current / (window.innerHeight * 0.6))
+    const progress = Math.min(1, dragYRef.current / (window.innerHeight * THRESHOLD_RATIO))
 
     ctx.beginPath()
     ctx.moveTo(n[0].x, n[0].y)
@@ -99,10 +95,8 @@ export default function RopeFooter() {
       ctx.lineTo(n[i].x, n[i].y)
     }
 
-    const r = Math.round(255)
     const g = Math.round(140 + progress * 100)
-    const b = 0
-    ctx.strokeStyle = `rgb(${r},${g},${b})`
+    ctx.strokeStyle = `rgb(255,${g},0)`
     ctx.lineWidth = 3 + progress * 2
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
@@ -110,7 +104,6 @@ export default function RopeFooter() {
     ctx.shadowBlur = 8 + progress * 12
     ctx.stroke()
 
-    // Rope knot dots
     for (let i = 0; i < n.length; i += 4) {
       ctx.beginPath()
       ctx.arc(n[i].x, n[i].y, 2.5, 0, Math.PI * 2)
@@ -124,7 +117,6 @@ export default function RopeFooter() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-
     const loop = () => {
       stepRope(currentX.current, currentY.current)
       drawRope(ctx)
@@ -147,6 +139,34 @@ export default function RopeFooter() {
     return () => stopLoop()
   }, [pulling])
 
+  const playBillieJean = async () => {
+    try {
+      const ctx = audioCtxRef.current
+      if (!ctx) {
+        // fallback: try regular Audio element
+        const audio = new Audio('/media/billie-jean.mp3')
+        audio.volume = 0.8
+        audio.play().catch(() => {})
+        return
+      }
+      if (ctx.state === 'suspended') {
+        await ctx.resume()
+      }
+      const response = await fetch('/media/billie-jean.mp3')
+      const arrayBuffer = await response.arrayBuffer()
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer)
+      const source = ctx.createBufferSource()
+      source.buffer = audioBuffer
+      const gainNode = ctx.createGain()
+      gainNode.gain.value = 0.8
+      source.connect(gainNode)
+      gainNode.connect(ctx.destination)
+      source.start(0)
+    } catch {
+      // silently fail
+    }
+  }
+
   useEffect(() => {
     if (!pulling) return
 
@@ -159,22 +179,18 @@ export default function RopeFooter() {
       currentX.current = e.clientX
       currentY.current = e.clientY
 
-      vibrate(1) // tiny micro-vibration while dragging
+      vibrate(1)
 
-      const threshold = window.innerHeight * 0.6
+      const threshold = window.innerHeight * THRESHOLD_RATIO
       if (dy >= threshold) {
         isDragging.current = false
         stopLoop()
         setPulling(false)
         setDragY(0)
         dragYRef.current = 0
-        vibrate([80, 40, 120, 40, 200]) // snap vibration
+        vibrate([80, 40, 120, 40, 200])
         setRevealed(true)
-        try {
-          const audio = new Audio('/media/billie-jean.mp3')
-          audio.volume = 0.8
-          audio.play().catch(() => {})
-        } catch {}
+        playBillieJean()
       }
     }
 
@@ -184,8 +200,6 @@ export default function RopeFooter() {
       stopLoop()
       setPulling(false)
       dragYRef.current = 0
-      // rAF ensures the transition is active before we reset dragY to 0,
-      // so the spring-back animation actually fires
       requestAnimationFrame(() => setDragY(0))
     }
 
@@ -200,6 +214,18 @@ export default function RopeFooter() {
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault()
     if (!textRef.current) return
+
+    // Create AudioContext here — inside user gesture — so browsers unlock audio
+    if (!audioCtxRef.current) {
+      try {
+        type WebkitWindow = Window & { webkitAudioContext?: typeof AudioContext }
+        const AudioCtx = window.AudioContext || (window as unknown as WebkitWindow).webkitAudioContext
+        if (AudioCtx) audioCtxRef.current = new AudioCtx()
+      } catch { /* ignore */ }
+    } else if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume().catch(() => {})
+    }
+
     const rect = textRef.current.getBoundingClientRect()
     const anchorX = rect.left + rect.width / 2
     const anchorY = rect.top + rect.height / 2
@@ -214,7 +240,7 @@ export default function RopeFooter() {
   }
 
   const screenH = typeof window !== 'undefined' ? window.innerHeight : 800
-  const pullProgress = Math.min(1, dragY / (screenH * 0.6))
+  const pullProgress = Math.min(1, dragY / (screenH * THRESHOLD_RATIO))
   const textTranslateY = pulling ? -dragY * 0.9 : 0
 
   if (revealed) {
@@ -253,7 +279,7 @@ export default function RopeFooter() {
         ref={textRef}
         className={`footer-author${pulling ? ' pulling' : ''}`}
         onPointerDown={handlePointerDown}
-        title="Hold & drag up!"
+        title="Drag up to reveal!"
         style={{
           transform: `translateY(${textTranslateY}px)`,
           transition: pulling ? 'none' : 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
