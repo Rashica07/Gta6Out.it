@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 const RELEASE_DATE = new Date("2026-11-19T00:00:00");
 const ANNOUNCE_DATE = new Date("2023-12-05T00:00:00");
-const TRAILER_URL = "https://www.youtube.com/watch?v=QdBZExpvEZs";
+const TRAILER_URL = "https://www.youtube.com/watch?v=VQRLujxTm3c";
+const SITE_URL = "https://gta6out.it";
 
 function getTimeLeft() {
   const now = new Date();
@@ -116,14 +117,15 @@ function Fireworks({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+  const [hype, setHype] = useState(getHypeProgress);
   const [glitch, setGlitch] = useState(false);
-  const [hype] = useState(getHypeProgress);
   const [shareFlash, setShareFlash] = useState(false);
   const fireworksRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft(getTimeLeft());
+      setHype(getHypeProgress());
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -138,12 +140,16 @@ export default function Home() {
   }, [timeLeft.done]);
 
   const handleShare = useCallback(() => {
-    const text = `GTA 6 drops in ${timeLeft.days} days! 🎮🔥 Are you ready? #GTA6 #GrandTheftAuto`;
+    const text =
+      `🚨 GTA 6 drops in ${timeLeft.days} days, ${timeLeft.hours} hours & ${timeLeft.minutes} minutes!\n` +
+      `Vice City is almost here. Jason & Lucia are ready — are YOU? 🎮🔥\n\n` +
+      `Track the countdown live 👉 ${SITE_URL}\n\n` +
+      `#GTA6 #GrandTheftAutoVI #RockstarGames #ViceCity`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setShareFlash(true);
     setTimeout(() => setShareFlash(false), 1000);
-  }, [timeLeft.days]);
+  }, [timeLeft.days, timeLeft.hours, timeLeft.minutes]);
 
   if (timeLeft.done) {
     return (
