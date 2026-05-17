@@ -23,6 +23,24 @@ const POLICE_MESSAGES = [
   'ALL UNITS: DO NOT LET THEM REACH THE PORT. BLOCK ALL EXITS.',
 ]
 
+const GTA_TIPS = [
+  'If you\'ve got a wanted level, find a Pay N Spray and lay low — the cops will lose track of you fast.',
+  'Need quick cash? Rob a store at night. Just keep moving before backup arrives.',
+  'Always keep a snack in your pocket. Hospitals are expensive and respawning wastes time.',
+  'Steal a fast car before a mission. You can\'t outrun trouble in a rusted hatchback.',
+  'Wanted level getting high? Drive into the water — most cops won\'t follow you there.',
+  'A suppressed weapon keeps things quiet. Loud guns wake up the whole neighbourhood.',
+  'The longer you stay in one spot with a wanted level, the tighter the search radius gets. Keep moving.',
+  'Buy property early. Passive income means you never have to rob a corner store again.',
+  'Helicopters are game-changers. Learn where they spawn and claim one before the mission gets messy.',
+  'Even if you\'re the best driver in Vice City, wearing a seatbelt doesn\'t hurt.',
+  'Three stars? Get off the highway. Alleys and back streets confuse patrol routes.',
+  'Blow up a police car blocking your path — it\'s faster than arguing with the bumper.',
+  'Keep an eye on your minimap. A blinking dot means someone already called the cops on you.',
+  'Max your armour before any big job. Body armour eats damage so your health doesn\'t have to.',
+  'If the heat is too heavy, change your outfit. A fresh look resets witness recognition.',
+]
+
 const GTA_CHEATS = ['HESOYAM','LXGIWYL','FULLCLIP','OUIQDMW','AEZAKMI','BRINGITON','YECGAA','LJSPQK','CPKTNWT','AIYPWZQP']
 
 // ─── Audio: synthesised police siren via Web Audio API ───
@@ -147,6 +165,24 @@ function PoliceLightBar() {
       <div className="police-segment white-m2" />
       <div className="police-segment blue-a" />
       <div className="police-segment blue-b" />
+    </div>
+  )
+}
+
+// ─── Vice City Tip Overlay ───
+function TipOverlay({ tip, onClose }: { tip: string; onClose: () => void }) {
+  const typed = useTypewriter(tip, true, 28)
+  const isDone = typed.length >= tip.length
+  return (
+    <div className="tip-overlay" onClick={onClose}>
+      <div className="tip-modal" onClick={e => e.stopPropagation()}>
+        <div className="tip-badge">VICE CITY TIP</div>
+        <div className="tip-star">★</div>
+        <p className="tip-text">
+          {typed}{!isDone && <span className="egg-cursor">|</span>}
+        </p>
+        <div className="tip-dismiss">TAP ANYWHERE TO CLOSE</div>
+      </div>
     </div>
   )
 }
@@ -316,6 +352,8 @@ export default function HomeClient() {
   const [showWanted, setShowWanted] = useState(false)
   const [showRockstar, setShowRockstar] = useState(false)
   const [cheatCode, setCheatCode] = useState<string | null>(null)
+  const [showTip, setShowTip] = useState(false)
+  const [currentTip, setCurrentTip] = useState('')
 
   // Keyboard tracking refs
   const konamiProgress = useRef<string[]>([])
@@ -365,7 +403,7 @@ export default function HomeClient() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setEasterEggOpen(false); setShowWanted(false)
-        setShowRockstar(false); return
+        setShowRockstar(false); setShowTip(false); return
       }
       // Konami Code
       const expected = KONAMI[konamiProgress.current.length]
@@ -546,6 +584,7 @@ export default function HomeClient() {
       {/* Easter Egg Overlays */}
       <EasterEggModal isOpen={easterEggOpen} onClose={() => setEasterEggOpen(false)} />
       {showWanted && <WantedOverlay onClose={() => setShowWanted(false)} />}
+      {showTip && <TipOverlay tip={currentTip} onClose={() => setShowTip(false)} />}
       {showRockstar && <RockstarReveal onClose={() => setShowRockstar(false)} />}
       {cheatCode && <CheatFlash code={cheatCode} onDone={() => setCheatCode(null)} />}
       {showShareCard && (
@@ -572,7 +611,7 @@ export default function HomeClient() {
         <div className="countdown-section">
           <p className="countdown-heading">RELEASING NOVEMBER 19, 2026</p>
           <div className="countdown-grid">
-            <CountdownUnit value={timeLeft.days} label="DAYS" onLongPress={() => { vibrate([100,50,100,50,200]); setShowWanted(true) }} />
+            <CountdownUnit value={timeLeft.days} label="DAYS" onLongPress={() => { vibrate([100,50,100,50,200]); setCurrentTip(GTA_TIPS[Math.floor(Math.random() * GTA_TIPS.length)]); setShowTip(true) }} />
             <div className="countdown-sep">:</div>
             <CountdownUnit value={timeLeft.hours} label="HOURS" />
             <div className="countdown-sep">:</div>
