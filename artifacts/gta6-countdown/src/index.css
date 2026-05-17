@@ -66,7 +66,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  gap: 2.5rem;
   flex: 1;
   justify-content: center;
   width: 100%;
@@ -143,20 +143,6 @@ body {
   filter: drop-shadow(0 0 20px rgba(200, 0, 255, 0.8));
   min-width: clamp(3rem, 10vw, 6rem);
   text-align: center;
-  position: relative;
-}
-
-.countdown-number::after {
-  content: attr(data-value);
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #ffffff 0%, #e080ff 40%, #ff50cc 80%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: blur(12px);
-  opacity: 0.4;
-  z-index: -1;
 }
 
 .countdown-label {
@@ -181,6 +167,148 @@ body {
 @keyframes pulse-sep {
   0%, 100% { opacity: 0.7; }
   50% { opacity: 0.2; }
+}
+
+/* ─── HYPE BAR ─── */
+.hype-section {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hype-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.hype-label {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: #d080ff;
+  text-transform: uppercase;
+}
+
+.hype-pct {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.4rem;
+  background: linear-gradient(90deg, #e080ff, #ff50cc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(200, 0, 255, 0.7));
+}
+
+.hype-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+  border: 1px solid rgba(180, 0, 255, 0.2);
+  overflow: visible;
+}
+
+.hype-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #7b00ff, #c000ff, #ff00cc);
+  box-shadow: 0 0 12px rgba(200, 0, 255, 0.8), 0 0 30px rgba(255, 0, 150, 0.4);
+  transition: width 0.8s ease;
+  position: relative;
+}
+
+.hype-glow {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px 4px #ff50cc, 0 0 24px 8px #c000ff;
+  pointer-events: none;
+}
+
+.hype-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #5a2080;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* ─── BUTTONS ─── */
+.buttons-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-trailer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.8rem;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #8b00ff 0%, #cc00aa 100%);
+  border: 1px solid rgba(255, 100, 220, 0.4);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(180, 0, 255, 0.5), 0 0 40px rgba(180, 0, 255, 0.2);
+  transition: box-shadow 0.2s ease, transform 0.15s ease, filter 0.2s ease;
+}
+
+.btn-trailer:hover {
+  box-shadow: 0 0 30px rgba(200, 0, 255, 0.9), 0 0 60px rgba(255, 0, 180, 0.4);
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.8rem;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #e080ff;
+  background: transparent;
+  border: 1px solid rgba(180, 0, 255, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 12px rgba(180, 0, 255, 0.15), inset 0 0 12px rgba(180, 0, 255, 0.05);
+}
+
+.btn-share:hover {
+  background: rgba(180, 0, 255, 0.12);
+  border-color: rgba(255, 0, 200, 0.7);
+  box-shadow: 0 0 24px rgba(200, 0, 255, 0.5), inset 0 0 16px rgba(180, 0, 255, 0.1);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.btn-share.share-flash {
+  background: rgba(255, 0, 200, 0.2);
+  border-color: #ff00cc;
+  color: #fff;
 }
 
 /* ─── TAGLINE ─── */
@@ -242,4 +370,83 @@ body {
 .footer-author {
   color: #d060ff;
   font-weight: 700;
+}
+
+/* ─── RELEASE CELEBRATION ─── */
+.released-wrapper {
+  background: #05000f;
+}
+
+.fireworks-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.released-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.released-label {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  color: #ff80ee;
+  text-transform: uppercase;
+  animation: fade-pulse 1.5s ease-in-out infinite;
+}
+
+.released-logo {
+  width: min(500px, 90vw);
+  animation: released-glow 2s ease-in-out infinite;
+}
+
+@keyframes released-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 40px rgba(200, 0, 255, 0.9)) drop-shadow(0 0 100px rgba(255, 0, 150, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 80px rgba(255, 0, 200, 1)) drop-shadow(0 0 160px rgba(200, 0, 255, 0.8));
+  }
+}
+
+.released-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #ffffff 0%, #ff80ee 40%, #cc00ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(200, 0, 255, 1));
+  animation: title-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes title-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.released-sub {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #b060e8;
+  text-transform: uppercase;
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
