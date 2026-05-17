@@ -222,7 +222,7 @@ export default function Home() {
           </div>
           <div className="hype-ends">
             <span>LAUNCH DAY</span>
-            <span>1 YEAR OUT</span>
+            <span>365 DAYS OUT</span>
           </div>
         </div>
 
