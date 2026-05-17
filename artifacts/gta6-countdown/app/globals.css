@@ -464,6 +464,176 @@ body {
   color: #fff;
 }
 
+.btn-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.8rem;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #e080ff;
+  background: transparent;
+  border: 1px solid rgba(180, 0, 255, 0.4);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 12px rgba(180, 0, 255, 0.15), inset 0 0 12px rgba(180, 0, 255, 0.05);
+}
+
+.btn-card:hover {
+  background: rgba(180, 0, 255, 0.1);
+  border-color: rgba(200, 0, 255, 0.7);
+  box-shadow: 0 0 24px rgba(200, 0, 255, 0.5), inset 0 0 16px rgba(180, 0, 255, 0.1);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+/* ─── SHARE CARD MODAL ─── */
+.sharecard-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 8, 0.92);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.25s ease;
+  padding: 1rem;
+}
+
+.sharecard-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(640px, 96vw);
+  padding: 1.5rem;
+  background: rgba(14, 0, 30, 0.97);
+  border: 1px solid rgba(180, 0, 255, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 0 60px rgba(180, 0, 255, 0.25), 0 0 120px rgba(255, 100, 0, 0.08);
+  animation: modal-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.sharecard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sharecard-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  color: #d080ff;
+}
+
+.sharecard-x {
+  background: transparent;
+  border: none;
+  color: #6030a0;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  transition: color 0.2s;
+}
+
+.sharecard-x:hover { color: #e080ff; }
+
+.sharecard-preview {
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0a0010;
+  border: 1px solid rgba(180, 0, 255, 0.2);
+}
+
+.sharecard-img {
+  width: 100%;
+  display: block;
+  border-radius: 6px;
+}
+
+.sharecard-generating {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5a2080;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.sharecard-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sharecard-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.65rem 1rem;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.sharecard-download {
+  background: rgba(255, 140, 0, 0.12);
+  border-color: rgba(255, 140, 0, 0.4);
+  color: #ff9040;
+}
+
+.sharecard-download:hover {
+  background: rgba(255, 140, 0, 0.22);
+  border-color: #ff8c00;
+  color: #fff;
+}
+
+.sharecard-copy {
+  background: rgba(180, 0, 255, 0.1);
+  border-color: rgba(180, 0, 255, 0.35);
+  color: #d080ff;
+}
+
+.sharecard-copy:hover {
+  background: rgba(180, 0, 255, 0.2);
+  border-color: rgba(200, 0, 255, 0.7);
+  color: #fff;
+}
+
+.sharecard-tweet {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.sharecard-tweet:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.sharecard-hint {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #3a1060;
+  text-transform: uppercase;
+  text-align: center;
+}
+
 /* ─── TAGLINE ─── */
 .tagline-section {
   display: flex;

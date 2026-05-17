@@ -419,6 +419,382 @@ function RopeFooter() {
     }, void 0, true);
 }
 }),
+"[project]/artifacts/gta6-countdown/components/ShareCard.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>ShareCard
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.2.6_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.2.6_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+'use client';
+;
+;
+function drawCard(canvas, days, hours, minutes, hype) {
+    const W = 600;
+    const H = 314;
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    // ── Background ──
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0a0010');
+    bg.addColorStop(0.5, '#160025');
+    bg.addColorStop(1, '#0a001a');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    // ── Grid lines ──
+    ctx.strokeStyle = 'rgba(180,0,255,0.05)';
+    ctx.lineWidth = 1;
+    for(let x = 0; x < W; x += 40){
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    for(let y = 0; y < H; y += 40){
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+    // ── Glow blobs ──
+    const glow1 = ctx.createRadialGradient(W * 0.2, H * 0.3, 0, W * 0.2, H * 0.3, 200);
+    glow1.addColorStop(0, 'rgba(180,0,255,0.18)');
+    glow1.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow1;
+    ctx.fillRect(0, 0, W, H);
+    const glow2 = ctx.createRadialGradient(W * 0.8, H * 0.7, 0, W * 0.8, H * 0.7, 180);
+    glow2.addColorStop(0, 'rgba(255,100,0,0.12)');
+    glow2.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow2;
+    ctx.fillRect(0, 0, W, H);
+    // ── Border ──
+    ctx.strokeStyle = 'rgba(180,0,255,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(1, 1, W - 2, H - 2);
+    // ── Inner accent lines ──
+    ctx.strokeStyle = 'rgba(255,140,0,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(20, 20);
+    ctx.lineTo(W - 20, 20);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(20, H - 20);
+    ctx.lineTo(W - 20, H - 20);
+    ctx.stroke();
+    // ── "GRAND THEFT AUTO" label ──
+    ctx.font = '700 13px Rajdhani, sans-serif';
+    ctx.letterSpacing = '0.3em';
+    ctx.fillStyle = 'rgba(208,128,255,0.85)';
+    ctx.textAlign = 'left';
+    ctx.fillText('GRAND THEFT AUTO', 32, 50);
+    // ── "VI" big ──
+    ctx.font = '900 72px "Bebas Neue", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(200,0,255,0.9)';
+    ctx.shadowBlur = 28;
+    ctx.fillText('VI', 28, 128);
+    ctx.shadowBlur = 0;
+    // ── Divider ──
+    const div = ctx.createLinearGradient(28, 0, 220, 0);
+    div.addColorStop(0, 'rgba(200,0,255,0.8)');
+    div.addColorStop(0.5, 'rgba(255,140,0,0.6)');
+    div.addColorStop(1, 'transparent');
+    ctx.strokeStyle = div;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(28, 138);
+    ctx.lineTo(220, 138);
+    ctx.stroke();
+    // ── Days countdown ──
+    ctx.font = '900 96px "Bebas Neue", sans-serif';
+    const dayGrad = ctx.createLinearGradient(28, 140, 28, 240);
+    dayGrad.addColorStop(0, '#ffffff');
+    dayGrad.addColorStop(0.4, '#ff9000');
+    dayGrad.addColorStop(1, '#e080ff');
+    ctx.fillStyle = dayGrad;
+    ctx.shadowColor = 'rgba(255,140,0,0.5)';
+    ctx.shadowBlur = 20;
+    ctx.fillText(String(days), 28, 240);
+    ctx.shadowBlur = 0;
+    ctx.font = '700 14px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(176,96,232,0.9)';
+    ctx.fillText('DAYS UNTIL RELEASE', 28, 262);
+    // ── Hours / minutes sub-line ──
+    ctx.font = '600 12px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(150,80,200,0.7)';
+    ctx.fillText(`${String(hours).padStart(2, '0')}h  ${String(minutes).padStart(2, '0')}m`, 28, 285);
+    // ── Right panel: hype ──
+    const RX = 340;
+    const RW = 230;
+    // Hype label
+    ctx.font = '700 10px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(208,128,255,0.7)';
+    ctx.textAlign = 'left';
+    ctx.fillText('HYPE METER', RX, 72);
+    // Hype percentage big
+    ctx.font = '900 62px "Bebas Neue", sans-serif';
+    const hypeGrad = ctx.createLinearGradient(RX, 80, RX + 160, 140);
+    hypeGrad.addColorStop(0, '#ff8c00');
+    hypeGrad.addColorStop(0.5, '#e080ff');
+    hypeGrad.addColorStop(1, '#ff50cc');
+    ctx.fillStyle = hypeGrad;
+    ctx.shadowColor = 'rgba(200,0,255,0.6)';
+    ctx.shadowBlur = 16;
+    ctx.fillText(`${hype.toFixed(1)}%`, RX, 148);
+    ctx.shadowBlur = 0;
+    // Hype bar track
+    const BAR_Y = 164;
+    const BAR_H = 8;
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.beginPath();
+    ctx.roundRect(RX, BAR_Y, RW, BAR_H, 4);
+    ctx.fill();
+    // Hype bar fill
+    const fillW = hype / 100 * RW;
+    const barGrad = ctx.createLinearGradient(RX, 0, RX + RW, 0);
+    barGrad.addColorStop(0, '#7b00ff');
+    barGrad.addColorStop(0.4, '#c000ff');
+    barGrad.addColorStop(0.7, '#ff50cc');
+    barGrad.addColorStop(1, '#ff8c00');
+    ctx.fillStyle = barGrad;
+    ctx.shadowColor = 'rgba(200,0,255,0.8)';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.roundRect(RX, BAR_Y, fillW, BAR_H, 4);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // Hype bar ball
+    const ballX = RX + fillW;
+    ctx.beginPath();
+    ctx.arc(ballX, BAR_Y + BAR_H / 2, 7, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = '#ff50cc';
+    ctx.shadowBlur = 14;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // "MY HYPE" sub-label
+    ctx.font = '600 10px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(150,80,200,0.7)';
+    ctx.fillText('DRAG TO 100% IN THE REAL SITE →', RX, 190);
+    // ── Release date ──
+    ctx.font = '700 11px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(180,90,230,0.6)';
+    ctx.fillText('NOV 19, 2026  ·  VICE CITY AWAITS', RX, 225);
+    // ── URL badge ──
+    ctx.fillStyle = 'rgba(255,140,0,0.12)';
+    ctx.beginPath();
+    ctx.roundRect(RX, 240, RW, 28, 6);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,140,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(RX, 240, RW, 28, 6);
+    ctx.stroke();
+    ctx.font = '700 12px Rajdhani, sans-serif';
+    ctx.fillStyle = '#ff9040';
+    ctx.textAlign = 'center';
+    ctx.fillText('gta6out.it', RX + RW / 2, 259);
+    // ── Corner accent dots ──
+    for (const [cx, cy] of [
+        [
+            20,
+            20
+        ],
+        [
+            W - 20,
+            20
+        ],
+        [
+            20,
+            H - 20
+        ],
+        [
+            W - 20,
+            H - 20
+        ]
+    ]){
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,0,255,0.6)';
+        ctx.fill();
+    }
+}
+function ShareCard({ days, hours, minutes, seconds, hype, onClose }) {
+    const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const [imgUrl, setImgUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [copied, setCopied] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        document.fonts.ready.then(()=>{
+            drawCard(canvas, days, hours, minutes, hype);
+            setImgUrl(canvas.toDataURL('image/png'));
+        });
+    }, [
+        days,
+        hours,
+        minutes,
+        hype
+    ]);
+    const handleDownload = ()=>{
+        if (!imgUrl) return;
+        const a = document.createElement('a');
+        a.href = imgUrl;
+        a.download = `gta6-hype-${hype.toFixed(0)}pct.png`;
+        a.click();
+    };
+    const handleShare = ()=>{
+        const text = `🎮 ${days} days until GTA 6 drops — my hype is at ${hype.toFixed(1)}%!\n\nVice City awaits. Are you ready? 🔥\n\n#GTA6 #GrandTheftAutoVI\ngta6out.it`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    };
+    const handleCopy = async ()=>{
+        if (!canvasRef.current) return;
+        canvasRef.current.toBlob(async (blob)=>{
+            if (!blob) return;
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'image/png': blob
+                    })
+                ]);
+                setCopied(true);
+                setTimeout(()=>setCopied(false), 2000);
+            } catch  {
+                handleDownload();
+            }
+        });
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "sharecard-backdrop",
+        onClick: onClose,
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "sharecard-modal",
+            onClick: (e)=>e.stopPropagation(),
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "sharecard-header",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            className: "sharecard-title",
+                            children: "YOUR HYPE CARD"
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 244,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            className: "sharecard-x",
+                            onClick: onClose,
+                            children: "✕"
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 245,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                    lineNumber: 243,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "sharecard-preview",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
+                            ref: canvasRef,
+                            style: {
+                                display: imgUrl ? 'none' : 'block',
+                                width: '100%'
+                            }
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 249,
+                            columnNumber: 11
+                        }, this),
+                        imgUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                            src: imgUrl,
+                            alt: "GTA 6 Hype Card",
+                            className: "sharecard-img"
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 251,
+                            columnNumber: 13
+                        }, this),
+                        !imgUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "sharecard-generating",
+                            children: "Generating..."
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 253,
+                            columnNumber: 23
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                    lineNumber: 248,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "sharecard-actions",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            className: "sharecard-btn sharecard-download",
+                            onClick: handleDownload,
+                            children: "↓ SAVE IMAGE"
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 257,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            className: "sharecard-btn sharecard-copy",
+                            onClick: handleCopy,
+                            children: copied ? '✓ COPIED!' : '⊡ COPY IMAGE'
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 260,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            className: "sharecard-btn sharecard-tweet",
+                            onClick: handleShare,
+                            children: "𝕏 SHARE ON X"
+                        }, void 0, false, {
+                            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                            lineNumber: 263,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                    lineNumber: 256,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "sharecard-hint",
+                    children: "Save the image and attach it to your post for maximum hype"
+                }, void 0, false, {
+                    fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+                    lineNumber: 268,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+            lineNumber: 242,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/artifacts/gta6-countdown/components/ShareCard.tsx",
+        lineNumber: 241,
+        columnNumber: 5
+    }, this);
+}
+}),
 "[project]/artifacts/gta6-countdown/components/HomeClient.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
@@ -430,7 +806,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$ne
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.2.6_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$artifacts$2f$gta6$2d$countdown$2f$components$2f$ThreeExplosion$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/artifacts/gta6-countdown/components/ThreeExplosion.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$artifacts$2f$gta6$2d$countdown$2f$components$2f$RopeFooter$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/artifacts/gta6-countdown/components/RopeFooter.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$artifacts$2f$gta6$2d$countdown$2f$components$2f$ShareCard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/artifacts/gta6-countdown/components/ShareCard.tsx [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -987,6 +1365,18 @@ function HomeClient() {
                 lineNumber: 287,
                 columnNumber: 7
             }, this),
+            showShareCard && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$artifacts$2f$gta6$2d$countdown$2f$components$2f$ShareCard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                days: timeLeft.days,
+                hours: timeLeft.hours,
+                minutes: timeLeft.minutes,
+                seconds: timeLeft.seconds,
+                hype: ballPos,
+                onClose: ()=>setShowShareCard(false)
+            }, void 0, false, {
+                fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
+                lineNumber: 289,
+                columnNumber: 9
+            }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
                 className: "content",
                 children: [
@@ -1000,12 +1390,12 @@ function HomeClient() {
                             draggable: false
                         }, void 0, false, {
                             fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                            lineNumber: 292,
+                            lineNumber: 302,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 291,
+                        lineNumber: 301,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1016,7 +1406,7 @@ function HomeClient() {
                                 children: "RELEASING NOVEMBER 19, 2026"
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 303,
+                                lineNumber: 313,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1027,7 +1417,7 @@ function HomeClient() {
                                         label: "DAYS"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 305,
+                                        lineNumber: 315,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1035,7 +1425,7 @@ function HomeClient() {
                                         children: ":"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 306,
+                                        lineNumber: 316,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CountdownUnit, {
@@ -1043,7 +1433,7 @@ function HomeClient() {
                                         label: "HOURS"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 307,
+                                        lineNumber: 317,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1051,7 +1441,7 @@ function HomeClient() {
                                         children: ":"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 308,
+                                        lineNumber: 318,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CountdownUnit, {
@@ -1059,7 +1449,7 @@ function HomeClient() {
                                         label: "MINUTES"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 309,
+                                        lineNumber: 319,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1067,7 +1457,7 @@ function HomeClient() {
                                         children: ":"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 310,
+                                        lineNumber: 320,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CountdownUnit, {
@@ -1075,19 +1465,19 @@ function HomeClient() {
                                         label: "SECONDS"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 311,
+                                        lineNumber: 321,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 304,
+                                lineNumber: 314,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 302,
+                        lineNumber: 312,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1101,7 +1491,7 @@ function HomeClient() {
                                         children: "HYPE METER"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 318,
+                                        lineNumber: 328,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1112,13 +1502,13 @@ function HomeClient() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 319,
+                                        lineNumber: 329,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 317,
+                                lineNumber: 327,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1133,7 +1523,7 @@ function HomeClient() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                                lineNumber: 325,
+                                                lineNumber: 335,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1143,7 +1533,7 @@ function HomeClient() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                                lineNumber: 326,
+                                                lineNumber: 336,
                                                 columnNumber: 17
                                             }, this)
                                         ]
@@ -1165,7 +1555,7 @@ function HomeClient() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                                lineNumber: 335,
+                                                lineNumber: 345,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1176,19 +1566,19 @@ function HomeClient() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                                lineNumber: 342,
+                                                lineNumber: 352,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 329,
+                                        lineNumber: 339,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 322,
+                                lineNumber: 332,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1198,20 +1588,20 @@ function HomeClient() {
                                         children: "LAUNCH DAY"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 355,
+                                        lineNumber: 365,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "365 DAYS OUT"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 356,
+                                        lineNumber: 366,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 354,
+                                lineNumber: 364,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1219,13 +1609,13 @@ function HomeClient() {
                                 children: isHolding ? `⚡ HOLD... ${Math.round(holdProgress)}% — DON'T LET GO` : 'DRAG THE BALL → HOLD AT 100% FOR 3s'
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 358,
+                                lineNumber: 368,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 316,
+                        lineNumber: 326,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1239,7 +1629,7 @@ function HomeClient() {
                                 children: "▶ WATCH THE TRAILER"
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 367,
+                                lineNumber: 377,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1248,7 +1638,7 @@ function HomeClient() {
                                 children: "𝕏 SHARE THE HYPE"
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 368,
+                                lineNumber: 378,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1257,13 +1647,13 @@ function HomeClient() {
                                 children: "🎴 MY HYPE CARD"
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 369,
+                                lineNumber: 379,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 366,
+                        lineNumber: 376,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1277,14 +1667,14 @@ function HomeClient() {
                                         children: "Welcome"
                                     }, void 0, false, {
                                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                        lineNumber: 374,
+                                        lineNumber: 384,
                                         columnNumber: 34
                                     }, this),
                                     " to Vice City"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 374,
+                                lineNumber: 384,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1292,19 +1682,19 @@ function HomeClient() {
                                 children: "The wait is almost over. Get ready."
                             }, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 375,
+                                lineNumber: 385,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 373,
+                        lineNumber: 383,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                lineNumber: 289,
+                lineNumber: 299,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -1314,7 +1704,7 @@ function HomeClient() {
                         className: "footer-line"
                     }, void 0, false, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 380,
+                        lineNumber: 390,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1323,26 +1713,26 @@ function HomeClient() {
                             "Created by ",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$artifacts$2f$gta6$2d$countdown$2f$components$2f$RopeFooter$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                                lineNumber: 382,
+                                lineNumber: 392,
                                 columnNumber: 27
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 381,
+                        lineNumber: 391,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$6_react$2d$dom$40$19$2e$1$2e$0_react$40$19$2e$1$2e$0_$5f$react$40$19$2e$1$2e$0$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "footer-line"
                     }, void 0, false, {
                         fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                        lineNumber: 384,
+                        lineNumber: 394,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/artifacts/gta6-countdown/components/HomeClient.tsx",
-                lineNumber: 379,
+                lineNumber: 389,
                 columnNumber: 7
             }, this)
         ]
@@ -1355,4 +1745,4 @@ function HomeClient() {
 }),
 ];
 
-//# sourceMappingURL=artifacts_gta6-countdown_components_06k2rj5._.js.map
+//# sourceMappingURL=artifacts_gta6-countdown_components_0gsel~c._.js.map

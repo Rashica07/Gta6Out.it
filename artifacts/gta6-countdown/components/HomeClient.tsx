@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import ThreeExplosion from './ThreeExplosion'
 import RopeFooter from './RopeFooter'
+import ShareCard from './ShareCard'
 
 const RELEASE_DATE = new Date('2026-11-19T00:00:00')
 const TRAILER_URL = 'https://www.youtube.com/watch?v=VQRLujxTm3c'
@@ -145,6 +146,7 @@ export default function HomeClient() {
   const [easterEggOpen, setEasterEggOpen] = useState(false)
   const [showExplosion, setShowExplosion] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [showShareCard, setShowShareCard] = useState(false)
 
   // Logo click counter via refs to avoid React batching issues
   const logoClickCount = useRef(0)
@@ -160,11 +162,14 @@ export default function HomeClient() {
   const holdStart = useRef(0)
   const isDraggingRef = useRef(false)
 
-  // Init
+  // Init — countdown + hype bar both tick every second
   useEffect(() => {
     setTimeLeft(getTimeLeft())
     setBallPos(getAutoHype())
-    const iv = setInterval(() => setTimeLeft(getTimeLeft()), 1000)
+    const iv = setInterval(() => {
+      setTimeLeft(getTimeLeft())
+      if (!isDraggingRef.current) setBallPos(getAutoHype())
+    }, 1000)
     return () => clearInterval(iv)
   }, [])
 
@@ -280,6 +285,16 @@ export default function HomeClient() {
       <div className="grid-overlay" />
 
       <EasterEggModal isOpen={easterEggOpen} onClose={() => setEasterEggOpen(false)} />
+      {showShareCard && (
+        <ShareCard
+          days={timeLeft.days}
+          hours={timeLeft.hours}
+          minutes={timeLeft.minutes}
+          seconds={timeLeft.seconds}
+          hype={ballPos}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
 
       <main className="content">
         {/* LOGO — click 5× for easter egg */}
@@ -361,6 +376,7 @@ export default function HomeClient() {
         <div className="buttons-row">
           <a href={TRAILER_URL} target="_blank" rel="noopener noreferrer" className="btn-trailer">▶ WATCH THE TRAILER</a>
           <button className={`btn-share${shareFlash ? ' share-flash' : ''}`} onClick={handleShare}>𝕏 SHARE THE HYPE</button>
+          <button className="btn-card" onClick={() => setShowShareCard(true)}>🎴 MY HYPE CARD</button>
         </div>
 
         {/* TAGLINE */}
